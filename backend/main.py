@@ -1,14 +1,17 @@
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit, join_room
 import datetime
-    
+import uuid
+
 app = Flask(__name__)
 # app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, cors_allowed_origins="*")
 session_state = {}
 default_block = {
-    "blockName": "Block 1",
-    "time": 5,
+    "id": str(uuid.uuid4()),
+    "title": "輸入事件內容",
+    "time": 10,
+    "unit": 'Min',
     "isActive": False,
     "startedAt": 0,
     "endedAt": 0
@@ -42,6 +45,18 @@ def start_timer(data):
     session_state[room]['endedAt'] = endTime.strftime("%Y-%m-%d %H:%M:%S")
     print(session_state[room])
     emit('session-state', session_state[room], room=room, broadcast=True)
+
+@socketio.on('update-session')
+def start_timer(data):
+    room, id, time, unit, title = data.get('room'), data.get('id'), data.get('time'), data.get('unit'), data.get('title')
+    for blocks in session_state[room]['blocks']:
+        if blocks['id'] == id:
+            blocks['time'] = time
+            blocks['unit'] = unit
+            blocks['title'] = title
+    print(session_state[room])
+    emit('session-state', session_state[room], room=room, broadcast=True)
+
 
 
 if __name__ == '__main__':
