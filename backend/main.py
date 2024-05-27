@@ -37,6 +37,11 @@ default_session = {
     ]
 }
 
+# Add an test api
+@app.route('/test')
+def test():
+    return 'Hello World'
+
 @socketio.on('join-session')
 def create_room(data):
     room_name = data.get('sessionName')
