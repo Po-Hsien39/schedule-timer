@@ -8,6 +8,7 @@ import CountdownTimer from "./CountdownTimer";
 import CountdownSetting from "./CountdownSetting";
 import CountdownBlock from "./CountdownBlock";
 import { makeStyles } from "@material-ui/core/styles";
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -73,7 +74,7 @@ const Counter = () => {
       }}
     >
       {/* , width: '200px', height: '200px', backgroundColor: '#000' */}
-      <Box sx={{position: 'absolute', left: '5%' }}>
+      <Box sx={{position: 'absolute', left: '5%', display: 'flex', flexDirection: 'column' }}>
         {/* circle button */}
         <Button
           variant="contained"
@@ -93,6 +94,26 @@ const Counter = () => {
           }}
         >
           <AddIcon />
+        </Button>
+        <Box sx={{height: '20px'}}></Box>
+        <Button
+          variant="contained"
+          sx={{
+            width: "60px",
+            height: "60px",
+            borderRadius: "50%",
+            color: "#000",
+            fontSize: "2rem",
+            '&:focus': {
+              outline: 'none',
+              border: 'none'
+            }
+          }}
+          onClick={() => {
+            socket.emit("add-new-block", { room: sessionId });
+          }}
+        >
+          <PlayArrowIcon />
         </Button>
       </Box>
       {sessionState && (
