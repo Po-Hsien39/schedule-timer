@@ -1,167 +1,172 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   Box,
-  Button,
-  Collapse,
+  MenuItem,
   IconButton,
   TextField,
   Typography,
-  Grid
-} from '@material-ui/core';
-import { Timer, ExpandMore as ExpandMoreIcon, ArrowDownward } from '@material-ui/icons';
+  Grid,
+} from "@material-ui/core";
+import { Timer, Edit as EditIcon, Done as DoneIcon } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const useStyles = makeStyles((theme) => ({
   grid: {
     padding: theme.spacing(1),
     textAlign: "center",
     backgroundColor: "#A4A2A1",
-    display: 'flex',
-    flexDirection: 'row',
-    margin: '10px 0px',
-    width: '70%',
-    borderRadius: '10px',
-    alignItems: 'center',
+    display: "flex",
+    flexDirection: "row",
+    margin: "10px 0px",
+    width: "70%",
+    borderRadius: "10px",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#000",
   },
   gridComponent: {
-    display: 'flex',
-    fontSize: '15px',
-    justifyContent: 'space-between',
-  }
+    display: "flex",
+    fontSize: "15px",
+    // justifyContent: 'space-between',
+  },
+  box: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 }));
 
-const CountdownBlock = ({ num }) => {
+const currencies = [
+  {
+    value: "Second",
+    label: "(s)",
+  },
+  {
+    value: "Min",
+    label: "(m)",
+  },
+  {
+    value: "Hour",
+    label: "(h)",
+  },
+];
+
+const CountdownBlock = ({ id, time, unit, title, updateBlock, deleteBlock }) => {
   const classes = useStyles();
-  const [isCounting, setIsCounting] = useState(false);
-  const [timerValue, setTimerValue] = useState(60); // 初始時間為 60 秒
-  const [timerName, setTimerName] = useState('');
+  const [displayBlock, setDisplayBlock] = useState({
+    id,
+    title,
+    unit,
+    time,
+  });
   const [openSettings, setOpenSettings] = useState(false);
 
-  const handleStartCountdown = () => {
-    setIsCounting(true);
-    // 在這裡可以寫開始倒數的邏輯，例如使用 setInterval()
-  };
+  useEffect(() => {
+    setDisplayBlock({
+      id,
+      title,
+      unit,
+      time,
+    });
+  }, [id, time, unit, title]);
 
-  const handleStopCountdown = () => {
-    setIsCounting(false);
-    // 在這裡可以寫停止倒數的邏輯，例如清除 setInterval()
-  };
-
-  const handleResetCountdown = () => {
-    setIsCounting(false);
-    setTimerValue(60); // 重設倒數計時器時間
-  };
-
-  const handleInputChange = (event) => {
-    setTimerValue(event.target.value);
-  };
-
-  const handleNameChange = (event) => {
-    setTimerName(event.target.value);
-  };
-
-  // return (
-  //   <Box>
-  //     {/* 倒數計時器 */}
-  //     <Grid container sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-  //       <Grid item xs={12} md={2}>
-  //         {/* <LocalOfferIcon fontSize="small" /> */}
-  //         tet
-  //       </Grid>
-  //       <Grid item xs={12} md={10} sx={{ textAlign: 'start' }}>
-  //         <Typography>test</Typography>
-  //       </Grid>
-  //     </Grid>
-  //     <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-  //       {/* <Box>
-  //         <IconButton onClick={isCounting ? handleStopCountdown : handleStartCountdown}>
-  //           <Timer />
-  //         </IconButton>
-  //       </Box>
-  //       <Box>
-  //         <Typography variant="h5">
-  //           {isCounting ? timerValue : `${timerValue} 秒`}
-  //         </Typography>
-  //       </Box> */}
-  //     </Box>
-  //     {/* <IconButton onClick={() => setOpenSettings(!openSettings)}>
-  //       <ExpandMoreIcon />
-  //     </IconButton> */}
-  //     {/* <Collapse in={openSettings}>
-  //       <Box mt={2}>
-  //         <TextField
-  //           label="名稱"
-  //           variant="outlined"
-  //           value={timerName}
-  //           onChange={handleNameChange}
-  //         />
-  //         <TextField
-  //           label="計時時間 (秒)"
-  //           variant="outlined"
-  //           type="number"
-  //           value={timerValue}
-  //           onChange={handleInputChange}
-  //         />
-  //         <Button onClick={handleResetCountdown} variant="contained" color="primary">
-  //           重設計時器
-  //         </Button>
-  //       </Box>
-  //     </Collapse> */}
-  //   </Box>
-  // );
+  useEffect(() => {
+    console.log(displayBlock);
+  }, [displayBlock]);
 
   return (
-    <Grid className={classes.grid} container sx={{
-      // display: 'flex',
-      // flexDirection: 'row',
-      // alignItems: 'center',
-      // marginTop: '10px',
-    }}>
+    <Grid className={classes.grid} container>
       <Grid item xs={12} md={1} />
       <Grid item xs={12} md={2} className={classes.gridComponent}>
-        <Box sx={{ marginRight: '10px' }}>
+        <Box className={classes.box}>
           <Timer fontSize="small" />
         </Box>
-        <Typography>{num} mins</Typography>
+        <Box style={{ width: "10px" }} />
+        {openSettings ? (
+          <Box className={classes.box}>
+            <TextField
+              hiddenLabel
+              id="filled-hidden-label-small"
+              variant="standard"
+              type="number"
+              style={{ width: 50 }}
+              value={displayBlock.time}
+              onChange={(e) =>
+                setDisplayBlock((p) => ({ ...p, time: e.target.value }))
+              }
+            />
+            <Box style={{ width: "10px" }} />
+            <TextField
+              id="standard-select-currency"
+              select
+              defaultValue={displayBlock.unit}
+              variant="standard"
+              onChange={(e) =>
+                setDisplayBlock((p) => ({ ...p, unit: e.target.value }))
+              }
+            >
+              {currencies.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Box>
+        ) : (
+          <Box className={classes.box}>
+            <Typography>
+              {displayBlock.time} {displayBlock.unit}
+            </Typography>
+          </Box>
+        )}
       </Grid>
-      <Grid item xs={12} md={8} sx={{ textAlign: 'start' }}>
-        <Typography>test</Typography>
+      <Grid item xs={12} md={7} sx={{ textAlign: "start" }}>
+        {openSettings ? (
+          <TextField
+            hiddenLabel
+            id="filled-hidden-label-small"
+            variant="standard"
+            style={{ width: "80%" }}
+            inputProps={{
+              style: {
+                textAlign: "center", // 將文字對齊方式設為居中
+              },
+            }}
+            value={displayBlock.title}
+            onChange={(e) =>
+              setDisplayBlock((p) => ({ ...p, title: e.target.value }))
+            }
+          />
+        ) : (
+          <Typography>{displayBlock.title}</Typography>
+        )}
       </Grid>
-      <Grid item xs={12} md={1} >
-        <IconButton onClick={() => setOpenSettings((p) => !p)}>
-          <ArrowDownward />
+      <Grid className={classes.box} item xs={12} md={2}>
+        <IconButton
+          onClick={() => setOpenSettings((p) => !p)}
+          style={{ outline: "none", border: "none" }}
+        >
+          {openSettings ? (
+            <DoneIcon
+              fontSize="small"
+              color="primary"
+              onClick={() => updateBlock(displayBlock)}
+            />
+          ) : (
+            <EditIcon fontSize="small" />
+          )}
+        </IconButton>
+        <IconButton
+          onClick={() => deleteBlock(id)}
+          style={{ outline: "none", border: "none" }}
+        >
+          <DeleteIcon />
         </IconButton>
       </Grid>
-      <Box>
-        {/* <IconButton onClick={isCounting ? handleStopCountdown : handleStartCountdown}>
-          <Timer />
-        </IconButton> */}
-        {/* <Typography variant="h5">
-          {isCounting ? timerValue : `${timerValue} 秒`}
-        </Typography> */}
-      </Box>
-      <Collapse in={openSettings}>
-        <Box mt={2}>
-          <TextField
-            label="名稱"
-            variant="outlined"
-            value={timerName}
-            onChange={handleNameChange}
-          />
-          <TextField
-            label="計時時間 (秒)"
-            variant="outlined"
-            type="number"
-            value={timerValue}
-            onChange={handleInputChange}
-          />
-          <Button onClick={handleResetCountdown} variant="contained" color="primary">
-            重設計時器
-          </Button>
-        </Box>
-      </Collapse>
+      <Box></Box>
     </Grid>
-  )
+  );
 };
 
 export default CountdownBlock;
