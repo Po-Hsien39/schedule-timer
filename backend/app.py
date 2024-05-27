@@ -87,4 +87,4 @@ def delete_block(data):
     emit('session-state', session_state[room], room=room, broadcast=True)
 
 if __name__ == '__main__':
-    socketio.run(app, allow_unsafe_werkzeug=True)
+    socketio.run(app, allow_unsafe_werkzeug=True, port=10000)
