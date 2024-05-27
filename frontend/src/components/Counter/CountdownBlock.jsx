@@ -9,6 +9,7 @@ import {
 } from "@material-ui/core";
 import { Timer, Edit as EditIcon, Done as DoneIcon } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const useStyles = makeStyles((theme) => ({
   grid: {
@@ -51,7 +52,7 @@ const currencies = [
   },
 ];
 
-const CountdownBlock = ({ id, time, unit, title, updateBlock }) => {
+const CountdownBlock = ({ id, time, unit, title, updateBlock, deleteBlock }) => {
   const classes = useStyles();
   const [displayBlock, setDisplayBlock] = useState({
     id,
@@ -120,7 +121,7 @@ const CountdownBlock = ({ id, time, unit, title, updateBlock }) => {
           </Box>
         )}
       </Grid>
-      <Grid item xs={12} md={8} sx={{ textAlign: "start" }}>
+      <Grid item xs={12} md={7} sx={{ textAlign: "start" }}>
         {openSettings ? (
           <TextField
             hiddenLabel
@@ -141,7 +142,7 @@ const CountdownBlock = ({ id, time, unit, title, updateBlock }) => {
           <Typography>{displayBlock.title}</Typography>
         )}
       </Grid>
-      <Grid item xs={12} md={1}>
+      <Grid className={classes.box} item xs={12} md={2}>
         <IconButton
           onClick={() => setOpenSettings((p) => !p)}
           style={{ outline: "none", border: "none" }}
@@ -155,6 +156,12 @@ const CountdownBlock = ({ id, time, unit, title, updateBlock }) => {
           ) : (
             <EditIcon fontSize="small" />
           )}
+        </IconButton>
+        <IconButton
+          onClick={() => deleteBlock(id)}
+          style={{ outline: "none", border: "none" }}
+        >
+          <DeleteIcon />
         </IconButton>
       </Grid>
       <Box></Box>

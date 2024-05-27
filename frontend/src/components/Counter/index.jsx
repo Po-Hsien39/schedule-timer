@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, TextField, Box, Typography } from "@mui/material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import AddIcon from '@mui/icons-material/Add';
 import { socket } from "../../socket";
 import { useParams } from "react-router-dom";
 import CountdownTimer from "./CountdownTimer";
@@ -28,6 +29,11 @@ const Counter = () => {
     socket.emit("update-session", {...data, room: sessionId})
   }
 
+  function deleteBlock(id) {
+    console.log(id);
+    socket.emit("delete-block", { room: sessionId, id });
+  }
+
   useEffect(() => {
     if (!sessionId) return;
     socket.emit("join-session", { sessionName: sessionId });
@@ -47,6 +53,10 @@ const Counter = () => {
     if (sessionState && sessionState.blocks)console.log(sessionState.blocks);
   }, [sessionState]);
 
+  useEffect(() => {
+    console.log(sessionState);
+  }, [sessionState])
+
   return (
     <Box
       className={classes.root}
@@ -59,9 +69,33 @@ const Counter = () => {
         flexDirection: "column",
         justifyContent: "center",
         backgroundColor: "#B6BBB0",
+        position: "relative",
       }}
     >
-      {/* {sessionState && (
+      {/* , width: '200px', height: '200px', backgroundColor: '#000' */}
+      <Box sx={{position: 'absolute', left: '5%' }}>
+        {/* circle button */}
+        <Button
+          variant="contained"
+          sx={{
+            width: "60px",
+            height: "60px",
+            borderRadius: "50%",
+            color: "#000",
+            fontSize: "2rem",
+            '&:focus': {
+              outline: 'none',
+              border: 'none'
+            }
+          }}
+          onClick={() => {
+            socket.emit("add-new-block", { room: sessionId });
+          }}
+        >
+          <AddIcon />
+        </Button>
+      </Box>
+      {sessionState && (
         <Box
           sx={{
             display: "flex",
@@ -69,11 +103,13 @@ const Counter = () => {
             alignItems: "center",
           }}
         >
+          <Box>
+          </Box>
           {sessionState.blocks.map((b, i) => (
-            <CountdownBlock key={i} id={b.id} time={b.time} unit={b.unit} title={b.title} updateBlock={updateBlock}/>
+            <CountdownBlock key={i} id={b.id} time={b.time} unit={b.unit} title={b.title} updateBlock={updateBlock} deleteBlock={deleteBlock}/>
           ))}
         </Box>
-      )} */}
+      )}
       {/* (sessionState.isActive ? (
           <CountdownTimer endTime={sessionState.endedAt} />
         ) : (
